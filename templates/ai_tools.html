@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ResumeIQ | Hybrid AI Tools</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#141c31;--line:#293652;--text:#edf3ff;--muted:#a8b5ce;--accent:#7c9cff;--green:#75e0bd}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#0b1020,#101a30);font:16px/1.55 system-ui,Segoe UI,sans-serif;color:var(--text)}
+    .wrap{max-width:1100px;margin:auto;padding:28px 18px 60px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}.brand{font-size:1.35rem;font-weight:800}.brand span{color:var(--accent)}a{color:#b8c9ff;text-decoration:none}.hero{padding:24px 0}.eyebrow{color:var(--green);font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}.hero h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.1;margin:8px 0}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:18px 0}.feature,.panel{background:rgba(20,28,49,.92);border:1px solid var(--line);border-radius:16px;padding:18px}.feature b{display:block;margin-bottom:5px}.feature p{font-size:.92rem;color:var(--muted);margin:0}.panel{margin-top:16px}.panel h2{margin:0 0 12px;font-size:1.2rem}label{display:block;margin:12px 0 6px;font-weight:650}textarea,select{width:100%;background:#0c1427;border:1px solid #344361;border-radius:10px;padding:12px;color:var(--text);font:inherit}textarea{min-height:150px;resize:vertical}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:750;cursor:pointer;background:var(--accent);color:#081126}.btn.secondary{background:#263552;color:var(--text)}.engine{display:inline-block;border:1px solid #355a58;color:var(--green);border-radius:999px;padding:3px 9px;font-size:.8rem}.result{white-space:pre-wrap;overflow-wrap:anywhere;background:#0a1223;border:1px solid var(--line);border-radius:12px;padding:16px}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{background:#0c1427;border:1px solid var(--line);padding:12px 15px;border-radius:12px;min-width:120px}.stat strong{font-size:1.5rem;display:block}.flash{background:#493a20;border:1px solid #8a6c34;padding:10px 12px;border-radius:10px;margin:12px 0}table{width:100%;border-collapse:collapse}th,td{text-align:left;border-bottom:1px solid var(--line);padding:10px 8px;font-size:.9rem}th{color:var(--muted)}.small{font-size:.86rem;color:var(--muted)}
+  </style>
+</head>
+<body><main class="wrap">
+  <header class="top"><div class="brand">Resume<span>IQ</span> <span style="color:#edf3ff;font-size:.85rem;font-weight:500">/ Hybrid AI Lab</span></div><nav><a href="{{ url_for('home') }}">Home</a> &nbsp;·&nbsp; <a href="{{ url_for('history') }}">Resume history</a> &nbsp;·&nbsp; <a href="{{ url_for('logout') }}">Logout</a></nav></header>
+  <section class="hero"><div class="eyebrow">Free AI · Local-first · No paid API required</div><h1>Your resume, your next step.</h1><p class="muted">Python NLP runs by default. If Ollama and the selected model are installed, ResumeIQ can use your local LLM; otherwise it automatically falls back to built-in analysis.</p></section>
+  <section class="grid">
+    <article class="feature"><b>01 · Analysis</b><p>Skills, sections, resume snapshot and improvement priorities.</p></article>
+    <article class="feature"><b>02 · Job matching</b><p>Compare resume keywords with a job description and find gaps.</p></article>
+    <article class="feature"><b>03 · Resume improver</b><p>Rewrite guidance without inventing experience or achievements.</p></article>
+    <article class="feature"><b>04 · Interview prep</b><p>Generate role-aware practice questions.</p></article>
+    <article class="feature"><b>05 · Learning roadmap</b><p>A six-week plan based on detected job-skill gaps.</p></article>
+    <article class="feature"><b>06 · Dashboard</b><p>Resume snapshot plus your recent saved analysis history.</p></article>
+  </section>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category,message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+  <section class="panel"><h2>Run an AI feature</h2>
+    <form method="post" action="{{ url_for('ai_tools') }}">
+      <label for="action">Choose feature</label>
+      <select id="action" name="action">
+        <option value="analysis" {% if action=='analysis' %}selected{% endif %}>Resume analysis</option>
+        <option value="matching" {% if action=='matching' %}selected{% endif %}>Job description matching</option>
+        <option value="improver" {% if action=='improver' %}selected{% endif %}>Resume improver</option>
+        <option value="interview" {% if action=='interview' %}selected{% endif %}>Interview preparation</option>
+        <option value="roadmap" {% if action=='roadmap' %}selected{% endif %}>6-week learning roadmap</option>
+        <option value="dashboard" {% if action=='dashboard' %}selected{% endif %}>AI dashboard + history</option>
+      </select>
+      <label for="resume_text">Resume text</label><textarea id="resume_text" name="resume_text" placeholder="Upload a resume on Home first, or paste resume text here...">{{ resume_text }}</textarea>
+      <label for="job_description">Target job description (required for matching; useful for interview/roadmap)</label><textarea id="job_description" name="job_description" placeholder="Paste the job description here..." style="min-height:110px">{{ job_description }}</textarea>
+      <div class="actions"><button class="btn" type="submit">Run selected feature</button><a class="btn secondary" href="{{ url_for('home') }}" style="display:inline-block">Back to Resume Analyzer</a></div>
+    </form>
+    <p class="small">Privacy: Python fallback works locally. When Ollama is running, the prompt is sent to your local Ollama service on this computer. Do not expose Ollama publicly.</p>
+  </section>
+  {% if result %}
+  <section class="panel"><div class="top"><h2>Result</h2><span class="engine">Engine: {{ result.engine }}</span></div>
+    {% if result.score is defined %}<div class="stats"><div class="stat"><strong>{{ result.score }}/100</strong><span class="small">Local snapshot score</span></div><div class="stat"><strong>{{ result.word_count }}</strong><span class="small">Words</span></div><div class="stat"><strong>{{ result.skills|length }}</strong><span class="small">Recognized skills</span></div>{% if result.percentage is defined %}<div class="stat"><strong>{{ result.percentage }}%</strong><span class="small">Keyword match</span></div>{% endif %}</div>
+      {% if result.skills %}<p><b>Recognized skills:</b> {{ result.skills|join(', ') }}</p>{% endif %}
+      {% if result.sections %}<p><b>Sections found:</b> {% for k,v in result.sections.items() %}{% if v %}{{ k }}{% if not loop.last %}, {% endif %}{% endif %}{% endfor %}</p>{% endif %}
+    {% endif %}
+    {% if result.percentage is defined %}<p><b>Matched:</b> {{ result.matched|join(', ') if result.matched else 'No detected overlap' }}</p><p><b>Missing keywords:</b> {{ result.missing|join(', ') if result.missing else 'No detected gaps' }}</p>{% endif %}
+    <div class="result">{{ result.text }}</div>
+    {% if result.history is defined %}<h3>Recent analysis history</h3>{% endif %}
+  </section>
+  {% endif %}
+  <section class="panel"><h2>Your recent analyses</h2>{% if history_rows %}<div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>File</th><th>ATS</th><th>Job match</th></tr></thead><tbody>{% for row in history_rows %}<tr><td>{{ row.created_at.strftime('%d %b %Y') }}</td><td>{{ row.filename }}</td><td>{{ row.ats_score }}/100</td><td>{{ (row.job_match_percentage|string + '%') if row.job_match_percentage is not none else '—' }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="muted">No saved analyses yet. Upload a resume to start your history.</p>{% endif %}</section>
+  <p class="small" style="margin-top:18px">AI output is guidance, not a hiring prediction. Verify every suggestion before using it in an application.</p>
+</main></body></html>

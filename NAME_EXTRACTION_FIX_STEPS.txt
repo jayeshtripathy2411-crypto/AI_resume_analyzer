@@ -1,0 +1,9 @@
+ResumeIQ — Name Extraction Fix
+
+1. Back up your current app.py (copy it as app_backup.py).
+2. Copy the included app.py into your project folder and replace the old app.py.
+3. Keep your .env, templates, static, database, and uploads folders unchanged.
+4. Run: python app.py
+5. Test with two different resumes. The detected name should come from each resume; if it cannot be identified, it should show “Not found” instead of a fixed name.
+
+This update removes the hardcoded candidate name from extract_name. Python syntax and isolated name-extraction examples were tested; full browser/database integration has not been tested here.

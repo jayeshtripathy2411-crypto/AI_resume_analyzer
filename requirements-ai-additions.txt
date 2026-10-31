@@ -1,0 +1,2 @@
+# No new mandatory pip packages are needed for AI tools.
+# Optional model: install Ollama separately from https://ollama.com

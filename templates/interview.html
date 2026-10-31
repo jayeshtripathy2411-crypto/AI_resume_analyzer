@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Interview Preparation</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .skills-card {
+            border-left: 5px solid #17a2b8;
+        }
+
+        .technical-card {
+            border-left: 5px solid #007bff;
+        }
+
+        .project-card {
+            border-left: 5px solid #28a745;
+        }
+
+        .hr-card {
+            border-left: 5px solid #6f42c1;
+        }
+
+        .skills {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        ol {
+            padding-left: 25px;
+            margin-bottom: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .empty {
+            color: #777;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 22px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .back-button:hover {
+            background: #444;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>
+            AI Interview Preparation
+        </h1>
+
+        <p>
+            Personalized interview questions generated from your resume
+        </p>
+
+    </div>
+
+
+    <!-- DETECTED SKILLS -->
+
+    <div class="card skills-card">
+
+        <h2>
+            Detected Skills
+        </h2>
+
+        <div class="skills">
+
+            {% if skills %}
+
+                {{ skills|join(", ") }}
+
+            {% else %}
+
+                No skills detected.
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- TECHNICAL QUESTIONS -->
+
+    <div class="card technical-card">
+
+        <h2>
+            Technical Questions
+        </h2>
+
+        {% if interview_questions.technical %}
+
+            <ol>
+
+                {% for question in interview_questions.technical %}
+
+                    <li>
+                        {{ question }}
+                    </li>
+
+                {% endfor %}
+
+            </ol>
+
+        {% else %}
+
+            <p class="empty">
+                No technical questions were generated.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- PROJECT QUESTIONS -->
+
+    <div class="card project-card">
+
+        <h2>
+            Project / Resume Questions
+        </h2>
+
+        {% if interview_questions.project %}
+
+            <ol>
+
+                {% for question in interview_questions.project %}
+
+                    <li>
+                        {{ question }}
+                    </li>
+
+                {% endfor %}
+
+            </ol>
+
+        {% else %}
+
+            <p class="empty">
+                No project questions were generated.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- HR QUESTIONS -->
+
+    <div class="card hr-card">
+
+        <h2>
+            HR Questions
+        </h2>
+
+        {% if interview_questions.hr %}
+
+            <ol>
+
+                {% for question in interview_questions.hr %}
+
+                    <li>
+                        {{ question }}
+                    </li>
+
+                {% endfor %}
+
+            </ol>
+
+        {% else %}
+
+            <p class="empty">
+                No HR questions were generated.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- BACK BUTTON -->
+
+    <a href="/" class="back-button">
+        Back to Resume Analyzer
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>

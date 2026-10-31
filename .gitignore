@@ -1,0 +1,35 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Private uploads
+uploads/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Generated files
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Tutorial
+desktop-tutorial/

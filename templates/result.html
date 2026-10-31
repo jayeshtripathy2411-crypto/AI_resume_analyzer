@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resume Analysis Result</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Resume Analysis Result</h1>
+
+
+    <!-- ================================================= -->
+    <!-- AI RESUME SUMMARY -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>🤖 AI Resume Summary</h2>
+
+        <p>
+            {{ ai_summary }}
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- AI INTERVIEW PREPARATION -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>🎤 AI Interview Preparation</h2>
+
+        <p>
+            Generate interview questions based on your resume,
+            skills, projects and experience.
+        </p>
+
+        <form action="/generate-interview"
+              method="POST">
+
+            <input type="hidden"
+                   name="resume_text"
+                   value="{{ resume_text }}">
+
+            <input type="hidden"
+                   name="skills"
+                   value="{{ skills|join(', ') }}">
+
+            <input type="hidden"
+                   name="projects"
+                   value="{{ projects }}">
+
+            <input type="hidden"
+                   name="experience"
+                   value="{{ experience }}">
+
+            <button type="submit">
+                Generate Interview Questions
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ATS SCORE -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>ATS Score</h2>
+
+        <div class="ats-score">
+            {{ ats_score }}/100
+        </div>
+
+        <p>
+            Your resume's ATS compatibility score is
+            <strong>{{ ats_score }}/100</strong>.
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- JOB MATCH -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>🎯 Job Match Analysis</h2>
+
+        {% if job_description %}
+
+            <h3>
+                Job Match Percentage:
+                <strong>{{ job_match_percentage }}%</strong>
+            </h3>
+
+            <p>
+                Your resume matches
+                <strong>{{ job_match_percentage }}%</strong>
+                of the technical skills detected in the job description.
+            </p>
+
+
+            <h3>📋 Required Skills</h3>
+
+            {% if jd_skills %}
+
+                <ul>
+
+                    {% for skill in jd_skills %}
+
+                        <li>{{ skill }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p>
+                    No skills from the job description were detected.
+                </p>
+
+            {% endif %}
+
+
+            <h3>✅ Matched Skills</h3>
+
+            {% if matched_skills %}
+
+                <ul>
+
+                    {% for skill in matched_skills %}
+
+                        <li>{{ skill }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p>
+                    No matching skills were detected.
+                </p>
+
+            {% endif %}
+
+
+            <h3>❌ Missing Skills</h3>
+
+            {% if missing_skills %}
+
+                <ul>
+
+                    {% for skill in missing_skills %}
+
+                        <li>{{ skill }}</li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p>
+                    No major technical skill gaps detected.
+                </p>
+
+            {% endif %}
+
+
+            <h3>💡 Recommended Learning</h3>
+
+            {% if missing_skill_recommendations %}
+
+                <ul>
+
+                    {% for recommendation in missing_skill_recommendations %}
+
+                        <li>
+                            {{ recommendation }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% endif %}
+
+
+            {% if job_improvement_suggestions %}
+
+                <h3>📝 Job-Specific Resume Improvements</h3>
+
+                <ul>
+
+                    {% for suggestion in job_improvement_suggestions %}
+
+                        <li>
+                            {{ suggestion }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% endif %}
+
+        {% else %}
+
+            <p>
+                No Job Description was provided.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ATS SCORE IMPROVEMENT -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>📈 How to Improve Your ATS Score</h2>
+
+        <p>
+            Current ATS Score:
+            <strong>{{ ats_improvement.current_score }}/100</strong>
+        </p>
+
+        <p>
+            Target ATS Score:
+            <strong>{{ ats_improvement.target_score }}/100</strong>
+        </p>
+
+        <p>
+            {{ ats_improvement.target_message }}
+        </p>
+
+        {% if ats_improvement.improvements %}
+
+            <h3>Recommended Improvements</h3>
+
+            <ul>
+
+                {% for improvement in ats_improvement.improvements %}
+
+                    <li>
+                        {{ improvement }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RESUME ANALYTICS DASHBOARD -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>📊 Resume Analytics Dashboard</h2>
+
+        <div style="margin-bottom: 20px;">
+
+            <h3>ATS Score: {{ resume_dashboard.ats_score }}/100</h3>
+
+            <div style="background:#e9ecef; border-radius:8px; height:18px;">
+                <div
+                    style="
+                        width: {{ resume_dashboard.ats_score }}%;
+                        background:#333;
+                        height:18px;
+                        border-radius:8px;
+                    "
+                ></div>
+            </div>
+
+        </div>
+
+
+        <div style="margin-bottom: 20px;">
+
+            <h3>
+                Job Match:
+                {{ resume_dashboard.job_match_display }}
+            </h3>
+
+            {% if job_description and job_description.strip() %}
+
+                <div style="background:#e9ecef; border-radius:8px; height:18px;">
+                    <div
+                        style="
+                            width: {{ resume_dashboard.job_match_percentage }}%;
+                            background:#333;
+                            height:18px;
+                            border-radius:8px;
+                        "
+                    ></div>
+                </div>
+
+            {% else %}
+
+                <p>
+                    Add a Job Description to calculate your job match score.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <div style="margin-bottom: 20px;">
+
+            <h3>
+                Skills Detected:
+                {{ resume_dashboard.skills_count }}
+            </h3>
+
+            <p>
+                The analyzer detected
+                <strong>{{ resume_dashboard.skills_count }}</strong>
+                technical and professional skills in your resume.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h3>
+                Resume Sections:
+                {{ resume_dashboard.completed_sections }}/{{ resume_dashboard.total_sections }}
+            </h3>
+
+            <ul>
+
+                {% for section, available in resume_dashboard.sections.items() %}
+
+                    <li>
+                        {% if available %}
+                            ✅
+                        {% else %}
+                            ❌
+                        {% endif %}
+
+                        {{ section }}
+                    </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ATS BREAKDOWN -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>ATS Score Breakdown</h2>
+
+        <ul>
+
+            <li>
+                Contact Information:
+
+                {% if email != "Not found" and phone != "Not found" %}
+                    Available
+                {% else %}
+                    Needs Improvement
+                {% endif %}
+            </li>
+
+            <li>
+                Skills:
+                {{ skills|length }} skills detected
+            </li>
+
+            <li>
+                Education:
+
+                {% if education != "Not found" %}
+                    Available
+                {% else %}
+                    Missing
+                {% endif %}
+            </li>
+
+            <li>
+                Experience:
+
+                {% if experience != "Not found" %}
+                    Available
+                {% else %}
+                    Missing
+                {% endif %}
+            </li>
+
+            <li>
+                Projects:
+
+                {% if projects != "Not found" %}
+                    Available
+                {% else %}
+                    Missing
+                {% endif %}
+            </li>
+
+            <li>
+                Certifications:
+
+                {% if certifications != "Not found" %}
+                    Available
+                {% else %}
+                    Missing
+                {% endif %}
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RESUME QUALITY -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Resume Quality Check</h2>
+
+        <p>
+            {{ quality }}
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- STRENGTHS -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>✅ Strengths</h2>
+
+        {% if strengths %}
+
+            <ul>
+
+                {% for strength in strengths %}
+
+                    <li>{{ strength }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- WEAKNESSES -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>⚠️ Weaknesses</h2>
+
+        {% if weaknesses %}
+
+            <ul>
+
+                {% for weakness in weaknesses %}
+
+                    <li>{{ weakness }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RECOMMENDATIONS -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>💡 Resume Recommendations</h2>
+
+        {% if recommendations %}
+
+            <ul>
+
+                {% for recommendation in recommendations %}
+
+                    <li>{{ recommendation }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- PERSONAL INFORMATION -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Personal Information</h2>
+
+        <p>
+            <strong>Name:</strong>
+            {{ name }}
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            {{ email }}
+        </p>
+
+        <p>
+            <strong>Phone:</strong>
+            {{ phone }}
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SKILLS -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Detected Skills</h2>
+
+        {% if skills %}
+
+            <ul>
+
+                {% for skill in skills %}
+
+                    <li>{{ skill }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EDUCATION -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Education</h2>
+
+        <p>{{ education }}</p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EXPERIENCE -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Experience</h2>
+
+        <p>{{ experience }}</p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- PROJECTS -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Projects</h2>
+
+        <p>{{ projects }}</p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CERTIFICATIONS -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Certifications</h2>
+
+        <p>{{ certifications }}</p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EXTRACTED TEXT -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+        <h2>Extracted Resume Text</h2>
+
+        <div class="resume-text">
+            {{ resume_text }}
+        </div>
+
+    </div>
+
+
+
+
+    <!-- ================================================= -->
+    <!-- DOWNLOAD PDF REPORT -->
+    <!-- ================================================= -->
+
+    <div class="card">
+        <h2>📄 Download Resume Analysis Report</h2>
+        <p>Download your current resume analysis as a PDF report.</p>
+        <form action="/download-report" method="POST">
+            <input type="hidden" name="candidate_name" value="{{ name }}">
+            <input type="hidden" name="candidate_email" value="{{ email }}">
+            <input type="hidden" name="candidate_phone" value="{{ phone }}">
+            <input type="hidden" name="ats_score" value="{{ ats_score }}">
+            <input type="hidden" name="job_match" value="{{ job_match_percentage if job_description else 'N/A' }}">
+            <input type="hidden" name="skills_count" value="{{ skills|length }}">
+            <input type="hidden" name="skills" value="{{ skills|join('||') }}">
+            <input type="hidden" name="matched_skills" value="{{ matched_skills|join('||') }}">
+            <input type="hidden" name="missing_skills" value="{{ missing_skills|join('||') }}">
+            <input type="hidden" name="improvements" value="{{ ats_improvement.improvements|join('||') }}">
+            <input type="hidden" name="section_education" value="{{ 'Available' if education != 'Not found' else 'Missing' }}">
+            <input type="hidden" name="section_experience" value="{{ 'Available' if experience != 'Not found' else 'Missing' }}">
+            <input type="hidden" name="section_projects" value="{{ 'Available' if projects != 'Not found' else 'Missing' }}">
+            <input type="hidden" name="section_certifications" value="{{ 'Available' if certifications != 'Not found' else 'Missing' }}">
+            <button type="submit">⬇️ Download PDF Report</button>
+        </form>
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BACK BUTTON -->
+    <!-- ================================================= -->
+
+    <div class="back-button">
+
+        <a href="/">
+
+            <button>
+                Analyze Another Resume
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
